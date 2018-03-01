@@ -96,6 +96,12 @@ def auth_rancher_local(url, username, password):
     else:
         auth_failure("Invalid credentials for username "+ username)
 
+def auth_github_local(url, password):
+    if (requests.post(url, data = { "authProvider": "githubconfig", "code": password })):
+        auth_success("someone")
+    else:
+        auth_failure("Invalid credentials")
+
 if all (k in os.environ for k in ("username","password","AUTH_METHOD")):
     username = os.environ.get('username') 
     password = os.environ.get('password') 
@@ -153,6 +159,19 @@ if all (k in os.environ for k in ("username","password","AUTH_METHOD")):
         else:
             auth_failure('Missing mandatory environment variable for authentication method "httpdigest" : AUTH_HTTPDIGEST_URL')
 
+    #=====[ Rancher Github ]==============================================================
+    # How to test:
+    #   @todo
+    # Example :
+    #   AUTH_METHOD='githubconfig'
+    elif auth_method=='githubconfig':
+        if "AUTH_RANCHERLOCAL_URL" in os.environ:
+            url=os.environ.get('AUTH_RANCHERLOCAL_URL')
+            auth_github_local(url, password)
+        else:
+            auth_failure('Missing mandatory environment variable for authentication method "githubconfig" : AUTH_RANCHERLOCAL_URL')
+
+         
     #=====[ Rancher local ]==============================================================
     # How to test:
     #   @todo
